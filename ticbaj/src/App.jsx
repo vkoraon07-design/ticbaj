@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Home from './Component/Home'
 import Profile from './Component/Profile'
-import AddMoney from './Component/AddMoney'
 import WalletPage from './Component/WalletPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Withdraw from './Component/Withdraw'
@@ -12,6 +11,7 @@ import BattleList from './Component/BattleList'
 import TicTacToe from './Component/Games/TicTacToe'
 import { SocketContext } from './Component/Games/SocketContext'
 import {socket} from './Component/Games/Socket'
+import TimeOutPopup from './Component/Games/TimeOutPopup'
 
 function App() {
   return (
@@ -21,7 +21,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Profile" element={<Profile />} />
-          <Route path="/AddMoney" element={<AddMoney />} />
           <Route path="/WalletPage" element={<WalletPage />} />
           <Route path="/Withdraw" element={<Withdraw />} />
           <Route path="/DepositCash" element={<DepositCash />} />

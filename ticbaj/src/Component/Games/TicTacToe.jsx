@@ -11,8 +11,11 @@ import clock from '../../Img/clock.png'
 import profile from '../../Img/gprofile.jpeg'
 import { ToastContainer, toast } from 'react-toastify'
 import { db, auth } from '../../Component/firebase'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { Link, useNavigate } from 'react-router-dom'
+import TimeOutPopup from './TimeOutPopup'
+import { reload } from 'firebase/auth'
+
 
 
 const ArrayForm = [
@@ -31,6 +34,19 @@ function TicTacToe() {
   const location = useLocation()
   const { playingAs } = location.state || {}
   const navigate = useNavigate()
+  const Initial_time = 20
+  const [timeLeft, setTimeLeft] = useState(Initial_time)
+  const [timeOut, setTimeout] = useState(false)
+  const [timeOutPopup, setTimeoutPopup] = useState(false)
+  const [wonmsg, setWonMsg] = useState()
+  const oppoIntial_time = 20
+  const [oppoTimeLeft, setOppoTimeLeft] = useState(oppoIntial_time)
+  const [wAmt, setWamt] = useState()
+  const [prizeGiven, setPrizeGiven] = useState(false)
+  const [oppoDisconnected, setOppoDisconnected] = useState()
+
+
+
 
 
   useEffect(() => {
@@ -44,6 +60,7 @@ function TicTacToe() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserName(docSnap.data());
+          setWamt(docSnap.data().WAmt)
         } else {
           toast.info("No user data found!");
         }
@@ -52,17 +69,114 @@ function TicTacToe() {
       }
     };
     fetchUserData();
-  }, []);
+  }, [])
 
 
-
-
-
-
-  socket?.on('opponentLeftMatch', () => {
-    alert('opponent left the match')
-    setFinishedState(true)
+  socket?.on("opponentDisconnected", async (data) => {
+    const user = auth.currentUser
+    if (!user) return
+    const prizeMoney = state?.prizemoney || 0;
+    if (!data.gameEnd) {
+      setOppoDisconnected(`Opponenet left, You won - ${prizeMoney} rupees`)
+      await updateDoc(doc(db, "users", user.uid), {
+        WAmt: wAmt + prizeMoney
+      })
+      setTimeoutPopup(true)
+    }
   })
+
+  useEffect(() => {
+    if (finishedState) {
+      socket?.emit("gameEnded", {
+        gameEnd: finishedState
+      })
+    }
+  }, [finishedState])
+
+
+
+  useEffect(() => {
+    setTimeLeft(Initial_time)
+  }, [currentPlayer])
+
+  useEffect(() => {
+    if (currentPlayer !== playingAs) return
+    if (timeLeft === 0) {
+      socket?.emit("timeout", {
+        Wonalert: `You won - ${state?.prizemoney} rupees`
+      })
+      socket.disconnect();
+      setTimeout(true)
+      setTimeoutPopup(true)
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [currentPlayer, playingAs, timeLeft])
+
+
+  socket?.on("timeoutinfo", async (data) => {
+    const user = auth.currentUser
+    if (!user) return
+    const timeOutWon = state?.prizemoney || 0;
+    const wonalert = data.Wonalert
+    if (wonalert) {
+      setTimeoutPopup(true)
+      setWonMsg(wonalert)
+      await updateDoc(doc(db, "users", user.uid), {
+        WAmt: wAmt + timeOutWon
+      })
+    }
+  })
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      socket?.emit("leaveQueue")
+      socket.disconnect()
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    };
+  }, [])
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href)
+    const handleBack = () => {
+      console.log("back pressed")
+      socket?.disconnect()
+      window.history.pushState(null, "", window.location.href)
+    }
+    window.addEventListener("popstate", handleBack)
+    return () => {
+      window.removeEventListener("popstate", handleBack)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (currentPlayer === playingAs) return;
+    if (oppoTimeLeft === 0) return
+
+    const timer = setInterval(() => {
+      setOppoTimeLeft(prev => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(timer)
+
+  }, [oppoTimeLeft, currentPlayer, playingAs])
+
+  useEffect(() => {
+    if (currentPlayer !== playingAs) {
+      setOppoTimeLeft(oppoIntial_time)
+    }
+
+  }, [currentPlayer, playingAs])
+
 
   socket?.on('ServerMove', (data) => {
     const id = data.state.id
@@ -76,7 +190,7 @@ function TicTacToe() {
     })
     setCurrentPlayer(data.state.sign === 'O' ? 'X' : 'O')
   })
-  
+
 
   const checkWinner = () => {
     //row dynamic
@@ -95,9 +209,11 @@ function TicTacToe() {
     }
 
     if (gameState[0][0] === gameState[1][1] && gameState[1][1] === gameState[2][2]) {
+      setFinishedArrayState([0, 4, 8])
       return gameState[0][0]
     }
     if (gameState[0][2] === gameState[1][1] && gameState[1][1] === gameState[2][0]) {
+      setFinishedArrayState([2, 4, 6])
       return gameState[0][2]
     }
 
@@ -109,6 +225,7 @@ function TicTacToe() {
     if (isDrawMatch) return 'Draw'
     return null
   }
+
   useEffect(() => {
     const winner = checkWinner()
     if (winner) {
@@ -119,38 +236,70 @@ function TicTacToe() {
 
 
 
+  useEffect(() => {
+    const prizeDistribute = async () => {
+      if (prizeGiven) return
+      const user = auth.currentUser
+      if (!user) return
+      if (finishedState === playingAs) {
+        const prizeMoney = state?.prizemoney || 0;
+        await updateDoc(doc(db, "users", user.uid), {
+          WAmt: wAmt + prizeMoney,
+        })
+        setPrizeGiven(true)
+      } else if (finishedState === "Draw") {
+        const drawBtn = state?.BtnNum || 0;
+        await updateDoc(doc(db, "users", user.uid), {
+          WAmt: wAmt + drawBtn
+        })
+        setPrizeGiven(true)
+      }
+    }
+    prizeDistribute()
+  }, [finishedState, wAmt, state?.prizemoney, state?.BtnNum, prizeGiven, playingAs])
+
+  const homeClick = () => {
+    socket?.disconnect()
+    navigate("/")
+    window.location.reload()
+  }
+
   return (
     <>
       <div className='gamebackground'>
 
         <div className='gamebg'>
-            <button className='backbtn'><img src={home} /></button>
-          
+          <button onClick={homeClick} className='backbtn'><img src={home} /></button>
+
 
           <div className='prizetop'>
             <img src={prizes} />
-            <h1>PRIZE POOL</h1>
-            <div className='pwrapper'>
-              <img src={rupee} />
-              <span>9.50</span>
-            </div>
+            <p>Prize Pool &#8377;{state?.prizemoney}</p>
+          </div>
+          <div className={currentPlayer === playingAs ? "timeLeft" : "oppotTimeLeft"}>
+            00:{timeLeft}
           </div>
           <div className='mainProfile'>
-            <div className={state?.playingAs === 'O' ? 'profileOnline' : 'profileOutline'}>
+            <div className={currentPlayer === playingAs ? 'profileOutline' : 'profileOnline'}>
               <div className='profileOnline'>
-                <img src={profile} />
+                <div className='xprofile'><b>{playingAs}</b></div>
                 <span>{userName.Name}</span>
               </div>
             </div>
-            <div className={state?.playingAs === "X" ? 'profileOnline' : 'profileOutline'}>
+
+            <div className={currentPlayer !== playingAs ? "oppoTimeShow" : ""}>
+              00:{oppoTimeLeft}
+            </div>
+            <div className={currentPlayer !== playingAs ? 'profileOutline' : 'profileOnline'}>
               <div className='profileOnline'>
-                <img src={profile} />
+                <div className='xprofile'><b>{playingAs === "O" ? "X" : "O"}</b></div>
                 <span>{state?.opponentName}</span>
               </div>
             </div>
           </div>
-
-          <h1>You are playing against {state?.opponentName}</h1>
+          <div className={playingAs === currentPlayer ? 'turninfo' : 'oppoturninfo'}>
+            {playingAs === currentPlayer ? 'Your Turn' : "Opponent's Turn"}
+          </div>
 
 
           <div className='main-wrapper'>
@@ -172,9 +321,22 @@ function TicTacToe() {
               ))}
             </div>
           </div>
-          <PopupCard
-            finishedState={finishedState} />
+          <PopupCard finishedState={finishedState} />
+          <TimeOutPopup
+            timeOutPopup={timeOutPopup}
+            finishedState={finishedState}
+            wonmsg={wonmsg}
+            oppoDisconnected={oppoDisconnected}
+          />
+
         </div>
+        <ToastContainer
+          position='bottom-center'
+          autoClose={2000}
+          closeOnClick={false}
+          theme="light"
+          limit={1}
+        />
       </div>
 
     </>

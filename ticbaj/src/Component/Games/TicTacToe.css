@@ -8,6 +8,7 @@
     align-items: center;
     margin: auto;
     position: relative;
+
 }
 
 @media(max-width: 900px) {
@@ -19,12 +20,13 @@
 .square {
     height: 80px;
     width: 80px;
-    background-color: #f59402;
+    background: linear-gradient(#7c0782, #2c022e);
     border-radius: 5px;
     cursor: pointer;
     color: #fff;
     align-items: center;
     text-align: center;
+    justify-content: center;
     overflow: hidden;
 }
 
@@ -39,7 +41,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    background-image: linear-gradient(#ff8a00, #e52e71);
+    background-color: #090909;
     height: 100dvh;
     width: 100%;
     align-items: center;
@@ -47,22 +49,26 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+
 }
 
 .mainProfile {
+    position: absolute;
+    top: 5px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 90%;
+    height: 150px;
     margin-top: 50px;
 }
 
 .profileOutline {
     padding: 5px;
     margin: 5px;
-    border: 2px solid #f0efed;
-    border-radius: 5px;
+    background-color: #181818;
+    border-radius: 25px;
 }
 
 .profileOnline {
@@ -72,6 +78,13 @@
     text-align: center;
     color: #fff;
 
+}
+
+.profileOnline span {
+    width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .profileOnline img {
@@ -109,10 +122,15 @@
     left: 6px;
     border: none;
     border-radius: 50%;
-    background-color: #e52e71;
+    background-color: #202020;
     margin: 10px;
     cursor: pointer;
     outline: none;
+    height: 34px;
+    width: 34px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
 }
 
 .backbtn img {
@@ -121,35 +139,27 @@
 }
 
 .prizetop {
-    height: 55px;
-    width: 80px;
-    border-bottom: 2px solid #f7d528;
-    border-left: 2px solid #f7d528;
-    border-right: 2px solid #f7d528;
+    height: 40px;
+    width: 100px;
     padding: 0 25px 0 25px;
-    border-bottom-left-radius: 35px;
-    border-bottom-right-radius: 35px;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
-    background-color: #e52e71;
+    border-radius: 25px;
+    margin-top: 10px;
+    background-color: #202020;
     color: #fff;
     position: relative;
 }
 
-.prizetop h1 {
-    position: absolute;
-    top: 0;
-    left: 40px;
-    padding-top: 2px;
+.prizetop p {
     font-size: 12px;
-    font-family: "Permanent Marker", cursive;
+    padding-top: 2px;
 }
 
 .prizetop img {
     position: absolute;
-    left: 5px;
-    top: 4px;
-    height: 40px;
-    width: 40px;
+    left: 8px;
+    top: 10px;
+    height: 20px;
+    width: 20px;
 
 }
 
@@ -174,7 +184,7 @@
     height: 100%;
     width: 100%;
     background-color: #000;
-    opacity: 0.33;
+    opacity: 0.75;
     position: absolute;
 }
 
@@ -195,11 +205,11 @@
 }
 
 .popup button {
-    height: 35px;
+    height: 40px;
     width: 80px;
-    border: 1px solid #f7d528;
+    border: none;
     outline: none;
-    background-color: #e52e71;
+    background-color: #7c0782;
     border-radius: 5px;
     color: #fff;
     cursor: pointer;
@@ -221,4 +231,101 @@
 
 .X-won {
     color: #e52e71;
+}
+
+.playAlert {
+    color: #97083c;
+    font-weight: bold;
+    position: relative;
+}
+
+.playAlert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3) 50%, transparent);
+    transform: skewX(-20deg);
+    animation: shine 2.5s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes shine {
+    0% {
+        left: -75%;
+    }
+
+    100% {
+        left: 125%;
+    }
+}
+
+.xprofile {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #000;
+    align-items: center;
+    text-align: center;
+    font-size: 25px;
+    justify-content: center;
+    display: flex;
+}
+
+.turninfo {
+    position: absolute;
+    top: 200px;
+    color: #fff;
+    font-size: 12px;
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+.oppoturninfo {
+    position: absolute;
+    top: 200px;
+    color: #fff;
+    font-size: 12px;
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+.timeLeft {
+    color: #808080;
+    font-size: 12px;
+    position: absolute;
+    top: 75px;
+    left: 56px;
+}
+
+.oppoTimeShow {
+    color: #808080;
+    font-size: 12px;
+    position: absolute;
+    top: 22px;
+    right: 28px;
+}
+
+.timeoutPopup {
+    height: 90px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
 }

@@ -1,8 +1,10 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
     padding-bottom: 70px;
+    overflow-x: hidden;
+    user-select: none;
 }
 
 .bottommenu {
@@ -30,6 +32,7 @@ body {
     font-size: 12px;
     text-decoration: none;
     color: #000;
+    cursor: pointer;
 }
 
 .linkit img {
@@ -67,6 +70,7 @@ body {
     font-size: 18px;
     text-decoration: none;
     color: #000;
+    cursor: pointer;
 
 }
 
@@ -79,12 +83,13 @@ body {
     height: 26px;
     color: #fff;
     font-size: 14px;
-    background-color: #02b555;
+    background-color: #7c0782;
     text-align: center;
     font-weight: bold;
     border-radius: 5px;
     padding: 6px;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .wallet img {
@@ -125,11 +130,15 @@ body {
     border-radius: 50%;
 }
 
+.profilecard h1 {
+    text-align: left;
+}
+
 .logout {
     margin: 10px 10px;
     width: 90%;
-    height: 35px;
-    background-color: #02b555;
+    height: 40px;
+    background-color: #7c0782;
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -137,6 +146,7 @@ body {
     align-items: center;
     cursor: pointer;
     font-weight: bold;
+    outline: none;
 }
 
 .profilename {
@@ -154,18 +164,19 @@ body {
     margin-top: 10px;
     width: 222px;
     height: 30px;
-    background-color: #02b555;
     padding: 6px;
-    border: none;
+    border: 1px solid #7c0782;
     border-radius: 5px;
-    color: #fff;
+    color: #000;
     align-items: center;
     cursor: pointer;
+    background-color: #fff;
+    outline: none;
 }
 
 input {
     width: 200px;
-    height: 24px;
+    height: 30px;
     padding: 4px 10px;
     border-radius: 4px;
     margin-top: 5px;
@@ -174,42 +185,49 @@ input {
 }
 
 input:hover {
-    border: 1px solid #02b555;
+    border: 1px solid #7c0782;
 }
 
 .depositcash {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     width: 90%;
     margin: 10px;
-    padding: 10px;
-    background-color: #02b555;
-    border-radius: 4px;
+    background-color: #fff;
+    border-radius: 10px;
     color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    align-items: center;
+
 }
 
 .depositcash h1 {
-    font-size: 16px;
+    padding-left: 20px;
+    font-size: 13px;
+    color: gray;
 }
 
 .depositcash h2 {
+    padding-left: 20px;
     font-size: 18px;
-    color: #f5dd07;
+    color: #000;
     font-weight: bold;
 }
 
-.depositcash img {
-    height: 15px;
-    width: 15px;
-}
 
 .depositcash button {
     border: none;
     padding: 10px;
-    width: 40%;
+    height: 35px;
+    width: 120px;
     background-color: #f5dd07;
-    color: #000;
-    border-radius: 4px;
+    color: #5d086e;
+    border-radius: 25px;
     font-weight: bold;
     cursor: pointer;
+    margin-right: 20px;
+    outline: none;
 }
 
 .withdrawcash {
@@ -246,6 +264,7 @@ input:hover {
     border-radius: 4px;
     font-weight: bold;
     cursor: pointer;
+    outline: none;
 }
 
 h1 {
@@ -284,51 +303,45 @@ h1 {
 }
 
 .withdrawform {
-    padding: 10px;
+
     display: flex;
     flex-direction: column;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    width: 90%;
+    margin: 10px;
+    align-items: center;
 
 }
 
 .withdrawform h1 {
     font-size: 14px;
-    color: #02b555;
+    color: #7c0782;
 }
 
 .withdrawform .Wbtn {
     margin-top: 10px;
-    width: 90%;
-    height: 35px;
-    background-color: #02b555;
+    width: 230px;
+    height: 40px;
+    background-color: #7c0782;
     padding: 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
     color: #fff;
     align-items: center;
     cursor: pointer;
-}
-
-.withdrawform .amountbtn {
-    display: flex;
-    flex-direction: row;
-}
-
-.withdrawform .amountbtn .btn {
-    padding: 5px;
-    width: 50px;
-    height: 26px;
-    margin: 10px 10px 0 0;
-    border: 1px solid #02b555;
-    cursor: pointer;
-    background-color: #fff;
-    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
     outline: none;
 }
 
-.withdrawform .amountbtn button:hover {
-    background-color: #02b555;
-    color: #fff;
+.withdrawform .Wbtn.active {
+    background-color: #808080;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -340,6 +353,11 @@ input::-webkit-inner-spin-button {
     .mainui {
         width: 100%;
     }
+}
+
+.withdrawform p {
+    color: grey;
+    padding: 5px;
 }
 
 .tictaccard {
@@ -413,7 +431,7 @@ input::-webkit-inner-spin-button {
 }
 
 .login h1 {
-    color: #02b555;
+    color: #7c0782;
     font-size: 14px;
     text-align: center;
 }
@@ -421,14 +439,16 @@ input::-webkit-inner-spin-button {
 .login button {
     margin-top: 10px;
     width: 90%;
-    height: 35px;
-    background-color: #02b555;
+    height: 40px;
+    font-weight: bold;
+    background-color: #7c0782;
     padding: 10px;
     border: none;
     border-radius: 5px;
     color: #fff;
     align-items: center;
     cursor: pointer;
+    outline: none;
 
 
 }
@@ -467,8 +487,10 @@ input::-webkit-inner-spin-button {
     justify-content: space-between;
 
 }
-.battlecard.topdetails span{
+
+.battlecard.topdetails span {
     font-size: 9px;
+
 }
 
 .BattleAmt {
@@ -493,15 +515,16 @@ input::-webkit-inner-spin-button {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: 26px;
+    height: 30px;
     width: 50px;
-    background-color: #02b555;
+    background-color: #7c0782;
     border-radius: 25px;
     color: #fff;
     padding: 0 15px 0 15px;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
+    outline: none;
 }
 
 .playBtn img {
@@ -510,11 +533,47 @@ input::-webkit-inner-spin-button {
 }
 
 .playBtn.active {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
+    background-color: #808080;
 }
 
 .playBtn span {
+    padding: 2px;
+}
+
+.practiceBtn {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 80px;
+    background-color: #f5dd07;
+    border-radius: 25px;
+    color: #7c0782;
+    padding: 0 15px 0 15px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+}
+
+.practiceBtn img {
+    height: 12px;
+    width: 12px;
+}
+
+.practiceBtn.active {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #808080;
+    color: #fff
+}
+
+.practiceBtn span {
     padding: 2px;
 }
 
@@ -586,17 +645,82 @@ input::-webkit-inner-spin-button {
 }
 
 .emailSpace {
-    border-radius: 5px;
     height: auto;
     width: 90%;
     padding: 10px;
     margin: 10px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    background-color: #f8f8f8;
+    border-radius: 15px;
+
 }
 
 .emailSpace span {
-    padding: 5px;
+    padding: 6px;
 
+}
+
+.DepositeCash {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    width: 90%;
+    margin: 10px;
+    align-items: center;
+
+}
+
+.DepositeCash img {
+    height: 200px;
+    width: 200px;
+    padding: 10px;
+}
+
+.DepositeCash span {
+    color: #fc0324;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.DepositeCash {
+    padding: 10px;
+}
+
+.WhatsAppC {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    margin: 10px;
+    border: 1px solid #30bd06;
+    border-radius: 10px;
+    align-items: center;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    color: #000;
+}
+
+.WhatsAppC img {
+    height: 40px;
+    width: 50px;
+    padding: 10px;
+}
+
+.howtoplay {
+    height: 30px;
+    width: 170px;
+    border: 1px solid #7c0782;
+    border-radius: 6px;
+    margin: 10px;
+    line-height: 30px;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    padding: 0 15px 0 15px;
+    color: #000;
+    outline: none;
+    cursor: pointer;
 }

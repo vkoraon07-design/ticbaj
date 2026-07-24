@@ -13,6 +13,7 @@ import { useNavigate, Link } from 'react-router-dom'
 function Profile() {
     const [user, setUser] = useState('')
     const [nameChange, setNameChange] = useState('')
+     const [wAmt, setWamt] = useState()
     const navigate = useNavigate()
 
 
@@ -38,6 +39,7 @@ function Profile() {
                 if (docSnap.exists()) {
                     setUser(docSnap.data());
                     setNameChange(docSnap.data().Name)
+                     setWamt(docSnap.data().WAmt)
                 } else {
                     toast.info("No user data found!");
                 }
@@ -72,14 +74,16 @@ function Profile() {
                 <div className='profilecard'>
                     <img scr={Profilebottom} />
                     <div className='profilename'>
-                        <span>Full Name</span>
+                        <span>User Name</span>
                         <input type='text' value={nameChange} placeholder='Name' maxLength='15'
                             onChange={(e) => setNameChange(e.target.value)} />
                         <button onClick={handleNameChange} className='editname'>CHANGE NAME</button></div>
                 </div>
+                <h1>User Details</h1>
                 <div className='emailSpace'>
                     <span><b>Email: </b>{user.Email}</span>
                     <span><b>Phone: </b>{user.Phone}</span>
+                    <span><b>Wallet Balance: </b>&#8377;{wAmt}</span>
                 </div>
 
                 <button onClick={handleLogout} className='logout'>LOGOUT</button>

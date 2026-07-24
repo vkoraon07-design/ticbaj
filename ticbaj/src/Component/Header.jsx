@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import './Style.css'
 import { useNavigate, Link } from 'react-router-dom'
 import rupee from '../Img/rupee.png'
 import { db, auth } from "./firebase"
 import { ToastContainer, toast } from 'react-toastify'
 import { doc, getDoc } from "firebase/firestore"
+import { socket } from './Games/Socket'
+import { SocketContext } from './Games/SocketContext'
+
 
 
 
 function Header() {
+  const socket = useContext(SocketContext)
+  const user = auth.currentUser
   const navigate = useNavigate()
   const [wAmt, setWamt] = useState()
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -33,14 +37,28 @@ function Header() {
 
   }, []);
 
+  const title = () => {
+    socket?.emit("leaveQueue")
+    navigate("/")
+  }
+
+  const wallet = () => {
+    socket?.emit("leaveQueue")
+    navigate("/WalletPage")
+  }
+
   return (
     <div className='header'>
-      <Link to='/' className='title'>TICBAJ</Link>
-        <Link to="/WalletPage" className='wallet'>
-          <img src={rupee} />
-          {wAmt}
-        </Link>
-    
+      <div onClick={title} className='title'>TICBAJ</div>
+      {user ? (
+        <div onClick={wallet} className='wallet'>
+          &#8377;{wAmt}
+        </div>
+      ) : (
+        ""
+      )}
+
+
 
       <ToastContainer
         position='bottom-center'

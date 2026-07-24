@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import BottomMenu from './Bottommenu'
 import Header from './Header'
 import './Style.css'
-import tictac from '../Img/tictac.png'
+import tictac from '../Img/tictac.jpeg'
 import { Link } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
 import { toast, ToastContainer } from 'react-toastify'
@@ -43,7 +43,7 @@ function Home() {
             <img src={tictac} />
           </Link>
         </div>
-        <Link to='/TicTacToe'>TicTacToe</Link>
+
         <ToastContainer
           position='bottom-center'
           autoClose={2000}

@@ -24,7 +24,6 @@ function Login() {
                 password
             );
             toast.success('Logged in successfully')
-            console.log("Logged In:", userCredential.user);
             navigate('/')
         } catch (error) {
             console.error(error.message);

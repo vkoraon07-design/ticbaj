@@ -1,89 +1,175 @@
-const { createServer } = require("http")
-const { Server } = require("socket.io")
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-const httpServer = createServer()
+const httpServer = createServer();
+
 const io = new Server(httpServer, {
-  cors: "http://localhost:5173/",
-})
-
-const allUsers = {}
-const allRooms = []
-
-
-io.on("connection", (socket) => {
-  console.log("Player connected:", socket.id);
-
-  allUsers[socket.id] = {
-    socket: socket,
-    online: true
-  }
-  socket.on('reqPlay', (data) => {
-    const currentUser = allUsers[socket.id]
-    currentUser.playerName = data.playerName
-
-    let opponentPlayer
-
-    allRooms.push({
-      player1: opponentPlayer,
-      player2: currentUser
-    })
-
-    for (const key in allUsers) {
-      const user = allUsers[key]
-      if (user.online && !user.playing && socket.id !== key) {
-        opponentPlayer = user
-        break
-
-      }
-    }
-
-    if (opponentPlayer) {
-      currentUser.socket.emit('opponentFound', {
-        opponentName: opponentPlayer.playerName,
-        playingAs: 'O',
-      })
-      opponentPlayer.socket.emit('opponentFound', {
-        opponentName: currentUser.playerName,
-        playingAs: 'X',
-      })
-      currentUser.socket.on('ClientMove', (data) => {
-        opponentPlayer.socket.emit('ServerMove', {
-          ...data
-        })
-      })
-      opponentPlayer.socket.on('ClientMove', (data) => {
-        currentUser.socket.emit('ServerMove', {
-          ...data
-        })
-      })
-    } else {
-      currentUser.socket.emit('opponentNotFound')
-
-    }
-  })
-
-  socket.on('disconnect', () => {
-    const currentUser = allUsers[socket.id]
-    currentUser.online = false
-    currentUser.playing = false
-
-    for (let index = 0; index < allRooms.length; index++) {
-      const { player1, player2 } = allRooms[index]
-
-      if (player1.socket?.id === socket.id) {
-        player2.socket.emit('opponentLeftMatch')
-
-      }
-      if (player2.socket?.id === socket.id) {
-        player1.socket.emit('opponentLeftMatch')
-
-      }
-    }
-  })
-
-
+  cors: { origin: "http://localhost:5173" },
 });
 
+const PORT = process.env.PORT || 3000;
+
+let queue = [];
+let roomCount = 0;
+let users = {}
+const rooms = {}
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("reqPlay", (data) => {
+    const playerName = data.playerName
+    const BtnNum = data.BtnNum
+    const Prize = data.Prize
+    const Active = data.Active
+    const uid = data.uid
+
+    queue = queue.filter((p) => p.id !== socket.id)
+    queue = queue.filter((p) => p.uid !== uid)
+    if (queue.find((s) => s.id === socket.id)) return
+
+    //check if same iser is already playing
+    const alreadyPalying = Object.values(users).some((p) => p.uid === uid)
+    if (alreadyPalying) return
+
+    queue.push({
+      id: socket.id,
+      name: playerName,
+      uid: uid,
+      socket: socket,
+      BtnNum: BtnNum,
+      Active: Active
+    })
+
+    //count socket connected to this button
+    const count = queue.filter((p) => p.BtnNum === BtnNum).length;
+    io.emit("buttonSocketCount", {
+      socketCount: count,
+      BtnNum: BtnNum
+    })
+
+    const opponentIndex = queue.findIndex(
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.uid !== uid
+    )
+
+    //if someone searching, opponent knows & send alert to all socket
+    if (opponentIndex === -1) {
+      socket.broadcast.emit("btnIsActive", {
+        Active: Active
+      })
+    }
 
 
-httpServer.listen(3000)
+    if (opponentIndex !== -1) {
+
+      const currentPlayerIndex = queue.findIndex(
+        (p) => p.id === socket.id
+      )
+
+      const player1 = queue[opponentIndex]
+      const player2 = queue[currentPlayerIndex]
+
+      // Remove both from queue
+      queue = queue.filter(
+        p => p.id !== player1.id && p.id !== player2.id
+      )
+
+
+      const roomId = `room-${roomCount++}`;
+
+      console.log(player1.name, player2.name)
+
+      player1.socket.join(roomId)
+      player2.socket.join(roomId)
+
+      users[player1.id] = roomId
+      users[player2.id] = roomId
+
+      player1.socket.emit("match-found", {
+        opponentName: player2.name,
+        playingAs: 'O',
+        BtnNum: BtnNum,
+        Prize: Prize
+      });
+
+      player2.socket.emit("match-found", {
+        opponentName: player1.name,
+        playingAs: 'X',
+        BtnNum: BtnNum,
+        Prize: Prize
+      })
+
+
+      player1.socket.on('ClientMove', (data) => {
+        player2.socket.emit('ServerMove', {
+          ...data
+        })
+      })
+
+      player2.socket.on('ClientMove', (data) => {
+        player1.socket.emit('ServerMove', {
+          ...data
+        })
+      })
+
+      player1.socket.on("timeout", (data) => {
+        player2.socket.emit('timeoutinfo', {
+          Wonalert: data.Wonalert
+        })
+      })
+
+      player2.socket.on("timeout", (data) => {
+        player1.socket.emit('timeoutinfo', {
+          Wonalert: data.Wonalert
+        })
+      })
+
+      console.log("Room created:", roomId);
+    }
+  })
+
+
+  socket.on("leaveQueue", () => {
+    queue = queue.filter((p) => p.id !== socket.id)
+  })
+
+  socket.on("gameEnded", (data) => {
+    queue = queue.filter((p) => p.id !== socket.id)
+    const roomId = users[socket.id]
+
+    if (roomId) {
+      socket.to(roomId).emit("opponentDisconnected", {
+        gameEnd: data.gameEnd
+      })
+
+      delete users[socket.id]
+      delete rooms[roomId]
+    }
+  })
+
+  socket.on("disconnect", () => {
+    console.log("Disconnected:", socket.id);
+    queue = queue.filter((p) => p.id !== socket.id)
+    const index = queue.findIndex((p) => p.id === socket.id);
+
+    if (index !== -1) {
+      queue.splice(index, 1)
+    }
+
+    const roomId = users[socket.id]
+
+    if (roomId) {
+      socket.to(roomId).emit("opponentDisconnected", {
+        winner: "Opponenet left the match"
+      })
+
+      delete users[socket.id]
+      delete rooms[roomId]
+    }
+
+  })
+});
+
+httpServer.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
