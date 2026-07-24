@@ -152,6 +152,7 @@ function BattleList() {
             })
         } else {
             toast.info('Insufficient balance, please add money')
+            socket?.emit("leaveQueue")
         }
     }
 
@@ -169,6 +170,7 @@ function BattleList() {
             })
         } else {
             toast.info('Insufficient balance, please add money')
+            socket?.emit("leaveQueue")
         }
     }
 
@@ -186,6 +188,7 @@ function BattleList() {
             })
         } else {
             toast.info('Insufficient balance, please add money')
+            socket?.emit("leaveQueue")
         }
     }
 
@@ -203,6 +206,7 @@ function BattleList() {
             })
         } else {
             toast.info('Insufficient balance, please add money')
+            socket?.emit("leaveQueue")
         }
     }
 
@@ -220,6 +224,7 @@ function BattleList() {
             })
         } else {
             toast.info('Insufficient balance, please add money')
+            socket?.emit("leaveQueue")
         }
     }
 
@@ -237,6 +242,7 @@ function BattleList() {
             })
         } else {
             toast.info('Insufficient balance, please add money')
+            socket?.emit("leaveQueue")
         }
     }
 
