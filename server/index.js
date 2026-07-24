@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 
 const io = new Server(httpServer, {
-  cors: { origin: "http://localhost:5173" },
+  cors: { origin: "https://ticbaj.web.app" },
 });
 
 const PORT = process.env.PORT || 3000;
@@ -24,13 +24,15 @@ io.on("connection", (socket) => {
     const Active = data.Active
     const uid = data.uid
 
-    queue = queue.filter((p) => p.id !== socket.id)
-    queue = queue.filter((p) => p.uid !== uid)
+    if (!uid) return
+
+    queue = queue.filter((p) => p.id !== socket.id && p.uid !== uid)
+
     if (queue.find((s) => s.id === socket.id)) return
 
     //check if same iser is already playing
-    const alreadyPalying = Object.values(users).some((p) => p.uid === uid)
-    if (alreadyPalying) return
+    const alreadyPlaying = Object.values(users).some((p) => p.uid === uid)
+    if (alreadyPlaying) return
 
     queue.push({
       id: socket.id,
@@ -41,6 +43,7 @@ io.on("connection", (socket) => {
       Active: Active
     })
 
+
     //count socket connected to this button
     const count = queue.filter((p) => p.BtnNum === BtnNum).length;
     io.emit("buttonSocketCount", {
@@ -49,7 +52,7 @@ io.on("connection", (socket) => {
     })
 
     const opponentIndex = queue.findIndex(
-      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.uid !== uid
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum
     )
 
     //if someone searching, opponent knows & send alert to all socket
