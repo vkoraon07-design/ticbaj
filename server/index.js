@@ -136,16 +136,6 @@ io.on("connection", (socket) => {
     queue = queue.filter((p) => p.id !== socket.id)
   })
 
-  socket.on("noInternet", (data) => {
-    queue = queue.filter((p) => p.id !== socket.id)
-    const roomId = users[socket.id]
-
-    if (roomId) {
-      delete users[socket.id]
-      delete rooms[roomId]
-    }
-  })
-
   socket.on("gameEnded", (data) => {
     queue = queue.filter((p) => p.id !== socket.id)
     const roomId = users[socket.id]
