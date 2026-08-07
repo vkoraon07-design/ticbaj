@@ -23,7 +23,6 @@ io.on("connection", (socket) => {
     const Prize = data.Prize
     const Active = data.Active
     const uid = data.uid
-    const Online = data.Online
 
     if (!uid) return
 
@@ -93,16 +92,14 @@ io.on("connection", (socket) => {
         opponentName: player2.name,
         playingAs: 'O',
         BtnNum: BtnNum,
-        Prize: Prize,
-        Online: Online
+        Prize: Prize
       });
 
       player2.socket.emit("match-found", {
         opponentName: player1.name,
         playingAs: 'X',
         BtnNum: BtnNum,
-        Prize: Prize,
-        Online: Online
+        Prize: Prize
       })
 
 
@@ -137,6 +134,16 @@ io.on("connection", (socket) => {
 
   socket.on("leaveQueue", () => {
     queue = queue.filter((p) => p.id !== socket.id)
+  })
+
+  socket.on("noInternet", (data) => {
+    queue = queue.filter((p) => p.id !== socket.id)
+    const roomId = users[socket.id]
+
+    if (roomId) {
+      delete users[socket.id]
+      delete rooms[roomId]
+    }
   })
 
   socket.on("gameEnded", (data) => {
