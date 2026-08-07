@@ -23,6 +23,7 @@ io.on("connection", (socket) => {
     const Prize = data.Prize
     const Active = data.Active
     const uid = data.uid
+    const Online = data.Online
 
     if (!uid) return
 
@@ -92,14 +93,16 @@ io.on("connection", (socket) => {
         opponentName: player2.name,
         playingAs: 'O',
         BtnNum: BtnNum,
-        Prize: Prize
+        Prize: Prize,
+        Online: Online
       });
 
       player2.socket.emit("match-found", {
         opponentName: player1.name,
         playingAs: 'X',
         BtnNum: BtnNum,
-        Prize: Prize
+        Prize: Prize,
+        Online: Online
       })
 
 
