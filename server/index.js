@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
     })
 
     const opponentIndex = queue.findIndex(
-      (p) => p.id !== socket.id && p.BtnNum === BtnNum && player.socket.connected
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.socket.connected
     )
 
     //if someone searching, opponent knows & send alert to all socket
