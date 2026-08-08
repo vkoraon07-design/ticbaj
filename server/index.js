@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
     })
 
     const opponentIndex = queue.findIndex(
-      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.socket.connected
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum
     )
 
     //if someone searching, opponent knows & send alert to all socket
@@ -132,6 +132,12 @@ io.on("connection", (socket) => {
       })
 
       console.log("Room created:", roomId);
+    }
+  })
+
+  socket.on("internetStatus", (data) => {
+    if (data.Online === false) {
+      queue = queue.filter((p) => p.id !== socket.id)
     }
   })
 
