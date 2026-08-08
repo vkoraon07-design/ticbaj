@@ -147,14 +147,6 @@ io.on("connection", (socket) => {
 
   socket.on("leaveQueue", () => {
     queue = queue.filter((p) => p.id !== socket.id)
-    rooms[roomId].players =
-      rooms[roomId].players.filter(
-        (p) => p.id !== socket.id
-      );
-    
-    if (rooms[roomId].players.length === 0) {
-      delete rooms[roomId];
-    }
     
     sendButtonCounts()
   })
