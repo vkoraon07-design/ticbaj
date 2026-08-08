@@ -7,8 +7,8 @@ const io = new Server(httpServer, {
   cors: { origin: "https://ticbaj.web.app" },
 
   // Detect dead/offline sockets faster
-  pingInterval: 2000,
-  pingTimeout: 2000
+  pingInterval: 1000,
+  pingTimeout: 1000
 });
 
 const PORT = process.env.PORT || 3000;
