@@ -28,11 +28,6 @@ io.on("connection", (socket) => {
     const Active = data.Active
     const uid = data.uid
 
-    console.log(data.Online)
-    if (data.Online === false) {
-      queue.filter((p) => p.id !== socket.id)
-    }
-
     if (!uid) return
 
     queue = queue.filter((p) => p.id !== socket.id && p.uid !== uid)
@@ -101,16 +96,14 @@ io.on("connection", (socket) => {
         opponentName: player2.name,
         playingAs: 'O',
         BtnNum: BtnNum,
-        Prize: Prize,
-        Online: data.Online
+        Prize: Prize
       });
 
       player2.socket.emit("match-found", {
         opponentName: player1.name,
         playingAs: 'X',
         BtnNum: BtnNum,
-        Prize: Prize,
-        Online: data.Online
+        Prize: Prize
       })
 
 
