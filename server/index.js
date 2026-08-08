@@ -170,35 +170,6 @@ io.on("connection", (socket) => {
       delete rooms[roomId]
     }
 
-    io.emit("buttonSocketCount", {
-      BtnNum: 0,
-      socketCount: queue.filter(p => p.BtnNum === 0).length
-    })
-    io.emit("buttonSocketCount", {
-      BtnNum: 5,
-      socketCount: queue.filter(p => p.BtnNum === 5).length
-    })
-    io.emit("buttonSocketCount", {
-      BtnNum: 10,
-      socketCount: queue.filter(p => p.BtnNum === 10).length
-    })
-    io.emit("buttonSocketCount", {
-      BtnNum: 20,
-      socketCount: queue.filter(p => p.BtnNum === 20).length
-    })
-    io.emit("buttonSocketCount", {
-      BtnNum: 50,
-      socketCount: queue.filter(p => p.BtnNum === 50).length
-    })
-    io.emit("buttonSocketCount", {
-      BtnNum: 100,
-      socketCount: queue.filter(p => p.BtnNum === 100).length
-    })
-    io.emit("buttonSocketCount", {
-      BtnNum: 500,
-      socketCount: queue.filter(p => p.BtnNum === 500).length
-    })
-
   })
 });
 
