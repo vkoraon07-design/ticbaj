@@ -72,14 +72,13 @@ io.on("connection", (socket) => {
       const currentPlayerIndex = queue.findIndex(
         (p) => p.id === socket.id
       )
+      sendButtonCounts()
 
       const player1 = queue[opponentIndex]
       const player2 = queue[currentPlayerIndex]
 
       // Remove both from queue
-      queue = queue.filter(
-        p => p.id !== player1.id && p.id !== player2.id
-      )
+      queue = queue.filter((p) => p.id !== player1.id && p.id !== player2.id)
 
 
       const roomId = `room-${roomCount++}`;
@@ -133,11 +132,13 @@ io.on("connection", (socket) => {
 
       console.log("Room created:", roomId);
     }
+    sendButtonCounts()
   })
 
 
   socket.on("leaveQueue", () => {
     queue = queue.filter((p) => p.id !== socket.id)
+    sendButtonCounts()
   })
 
   socket.on("gameEnded", (data) => {
@@ -152,6 +153,7 @@ io.on("connection", (socket) => {
       delete users[socket.id]
       delete rooms[roomId]
     }
+    sendButtonCounts()
   })
 
   socket.on("disconnect", () => {
@@ -173,8 +175,18 @@ io.on("connection", (socket) => {
       delete users[socket.id]
       delete rooms[roomId]
     }
-
+    sendButtonCounts()
   })
+
+  const sendButtonCounts = () => {
+    const counts = {}
+
+    queue.forEach((p) => {
+      counts[p.BtnNum] =
+        (counts[p.BtnNum] || 0) + 1;
+    })
+    io.emit("buttonCounts", counts)
+  }
 })
 
 httpServer.listen(PORT, "0.0.0.0", () => {
