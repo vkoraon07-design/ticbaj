@@ -50,7 +50,6 @@ io.on("connection", (socket) => {
       socket: socket,
       BtnNum: BtnNum,
       Active: Active,
-      Online: data.Online
     })
 
 
@@ -62,7 +61,7 @@ io.on("connection", (socket) => {
     })
 
     const opponentIndex = queue.findIndex(
-      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.Online === true
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum
     )
 
     //if someone searching, opponent knows & send alert to all socket
@@ -102,14 +101,16 @@ io.on("connection", (socket) => {
         opponentName: player2.name,
         playingAs: 'O',
         BtnNum: BtnNum,
-        Prize: Prize
+        Prize: Prize,
+        Online: data.Online
       });
 
       player2.socket.emit("match-found", {
         opponentName: player1.name,
         playingAs: 'X',
         BtnNum: BtnNum,
-        Prize: Prize
+        Prize: Prize,
+        Online: data.Online
       })
 
 
