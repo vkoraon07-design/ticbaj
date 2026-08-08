@@ -47,14 +47,6 @@ io.on("connection", (socket) => {
       Active: Active,
     })
 
-
-    //count socket connected to this button
-    const count = queue.filter((p) => p.BtnNum === BtnNum).length;
-    io.emit("buttonSocketCount", {
-      socketCount: count,
-      BtnNum: BtnNum
-    })
-
     const opponentIndex = queue.findIndex(
       (p) => p.id !== socket.id && p.BtnNum === BtnNum
     )
