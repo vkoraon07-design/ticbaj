@@ -158,6 +158,22 @@ io.on("connection", (socket) => {
     console.log("Disconnected:", socket.id);
     queue = queue.filter((p) => p.id !== socket.id)
     const index = queue.findIndex((p) => p.id === socket.id);
+    
+    // Remove from waiting queue
+    const player = queue.find(
+    (p) => p.id === socket.id
+    );
+
+    // Update button count
+    const count = queue.filter(
+      (p) => p.BtnNum === player.BtnNum
+    ).length;
+
+    io.emit("buttonSocketCount", {
+      socketCount: count,
+      BtnNum: player.BtnNum
+    });
+    }
 
     if (index !== -1) {
       queue.splice(index, 1)
