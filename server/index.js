@@ -81,8 +81,8 @@ io.on("connection", (socket) => {
       player2.socket.join(roomId)
 
       rooms[roomId] = {
-      BtnNum: BtnNum,
-      players: [player1.id, player2.id]
+        BtnNum: BtnNum,
+        players: [player1.id, player2.id]
       }
 
       users[player1.id] = roomId
@@ -183,14 +183,14 @@ io.on("connection", (socket) => {
         (counts[p.BtnNum] || 0) + 1;
     })
     // Players inside rooms
-  Object.values(rooms).forEach((room) => {
-    const btn = room.BtnNum
+    Object.values(rooms).forEach((room) => {
+      const btn = room.BtnNum
 
-    if (btn) {
-      counts[btn] =
-        (counts[btn] || 0) + room.players.length;
-    }
-  })
+      if (btn) {
+        counts[btn] =
+          (counts[btn] || 0) + room.players.length;
+      }
+    })
     io.emit("buttonCounts", counts)
   }
 })
