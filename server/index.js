@@ -169,7 +169,7 @@ io.on("connection", (socket) => {
       socketCount: count,
       BtnNum: player.BtnNum
     });
-    }
+    
 
     if (index !== -1) {
       queue.splice(index, 1)
