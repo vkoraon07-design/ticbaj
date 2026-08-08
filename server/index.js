@@ -28,6 +28,11 @@ io.on("connection", (socket) => {
     const Active = data.Active
     const uid = data.uid
 
+    console.log(data.Online)
+    if (data.Online === false) {
+      queue.filter((p) => p.id !== socket.id)
+    }
+
     if (!uid) return
 
     queue = queue.filter((p) => p.id !== socket.id && p.uid !== uid)
@@ -132,12 +137,6 @@ io.on("connection", (socket) => {
       })
 
       console.log("Room created:", roomId);
-    }
-  })
-
-  socket.on("internetStatus", (data) => {
-    if (data.Online === false) {
-      queue = queue.filter((p) => p.id !== socket.id)
     }
   })
 
