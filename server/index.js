@@ -5,7 +5,7 @@ const httpServer = createServer();
 
 const io = new Server(httpServer, {
   cors: { origin: "https://ticbaj.web.app" },
-  
+
   // Detect dead/offline sockets faster
   pingInterval: 5000,
   pingTimeout: 5000
@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
     io.emit("buttonSocketCount", {
       socketCount: count,
       BtnNum: BtnNum
-    }) 
+    })
 
     const opponentIndex = queue.findIndex(
       (p) => p.id !== socket.id && p.BtnNum === BtnNum
@@ -157,19 +157,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Disconnected:", socket.id);
     queue = queue.filter((p) => p.id !== socket.id)
-    const index = queue.findIndex((p) => p.id === socket.id);
-    
-    // Remove from waiting queue
-    const player = queue.find((p) => p.id === socket.id)
-
-    // Update button count
-    const count = queue.filter((p) => p.BtnNum === player.BtnNum).length;
-
-    io.emit("buttonSocketCount", {
-      socketCount: count,
-      BtnNum: player.BtnNum
-    });
-    
+    const index = queue.findIndex((p) => p.id === socket.id)
 
     if (index !== -1) {
       queue.splice(index, 1)
@@ -187,8 +175,8 @@ io.on("connection", (socket) => {
     }
 
   })
-});
+})
 
 httpServer.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  console.log(`Server running on port ${PORT}`)
+})
