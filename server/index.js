@@ -83,23 +83,6 @@ io.on("connection", (socket) => {
       users[player1.id] = roomId
       users[player2.id] = roomId
 
-      // Store room information
-      rooms[roomId] = {
-        BtnNum: BtnNum,
-        players: [
-          {
-            id: player1.id,
-            uid: player1.uid,
-            name: player1.name
-          },
-          {
-            id: player2.id,
-            uid: player2.uid,
-            name: player2.name
-          }
-        ]
-      };
-
       player1.socket.emit("match-found", {
         opponentName: player2.name,
         playingAs: 'O',
@@ -155,20 +138,13 @@ io.on("connection", (socket) => {
     queue = queue.filter((p) => p.id !== socket.id)
     const roomId = users[socket.id]
 
-    if (roomId && rooms[roomId]) {
+    if (roomId) {
       socket.to(roomId).emit("opponentDisconnected", {
         gameEnd: data.gameEnd
       })
 
-      rooms[roomId].players =
-        rooms[roomId].players.filter(
-          (p) => p.id !== socket.id
-        );
-
       delete users[socket.id]
-      if (rooms[roomId].players.length === 0) {
-        delete rooms[roomId];
-      }
+      delete rooms[roomId];
     }
     sendButtonCounts()
   })
@@ -184,26 +160,14 @@ io.on("connection", (socket) => {
 
     const roomId = users[socket.id]
 
-    if (roomId && rooms[roomId]) {
-      const room = rooms[roomId];
-
-      // Remove player from room
-      room.players = room.players.filter(
-        (p) => p.id !== socket.id
-      );
-    }
-
     if (roomId) {
       socket.to(roomId).emit("opponentDisconnected", {
         winner: "Opponenet left the match"
       })
 
       delete users[socket.id]
+      delete rooms[roomId];
 
-      // Delete room only when empty
-      if (room.players.length === 0) {
-        delete rooms[roomId];
-      }
     }
     sendButtonCounts()
   })
@@ -215,15 +179,6 @@ io.on("connection", (socket) => {
       counts[p.BtnNum] =
         (counts[p.BtnNum] || 0) + 1;
     })
-    // Players already inside rooms
-    Object.values(rooms).forEach((room) => {
-      const btn = room.BtnNum;
-
-      if (btn) {
-        counts[btn] =
-          (counts[btn] || 0) + room.players.length;
-      }
-    });
     io.emit("buttonCounts", counts)
   }
 
