@@ -4,7 +4,10 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://ticbaj.web.app" }
+  cors: { origin: "https://ticbaj.web.app" },
+
+  pingInterval: 3000,
+  pingTimeout: 3000
 });
 
 const PORT = process.env.PORT || 3000;
@@ -23,8 +26,8 @@ io.on("connection", (socket) => {
     const BtnNum = data.BtnNum
     const Prize = data.Prize
     const uid = data.uid
-    const oppoOffline = data.offline
-    
+
+
     queue = queue.filter((p) => p.id !== socket.id && p.uid !== uid)
 
     if (queue.find((s) => s.id === socket.id)) return
@@ -45,7 +48,7 @@ io.on("connection", (socket) => {
     sendButtonCounts()
 
     const opponentIndex = queue.findIndex(
-      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.offline !== false
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum
     )
 
     //if someone searching, opponent knows & send alert to all socket
