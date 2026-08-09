@@ -18,6 +18,7 @@ let roomCount = 0;
 let users = {}
 const rooms = {}
 
+
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
@@ -82,6 +83,11 @@ io.on("connection", (socket) => {
 
       users[player1.id] = roomId
       users[player2.id] = roomId
+
+      rooms[roomId] = {
+        BtnNum: player1.BtnNum,
+        Players: [player1.id, player2.id]
+      }
 
       player1.socket.emit("match-found", {
         opponentName: player2.name,
@@ -178,6 +184,13 @@ io.on("connection", (socket) => {
     queue.forEach((p) => {
       counts[p.BtnNum] =
         (counts[p.BtnNum] || 0) + 1;
+    })
+
+    Object.values(rooms).forEach((room) => {
+      room.Players.forEach((player) => {
+        counts[player.BtnNum] =
+          (counts[player.BtnNum] || 0) + 1;
+      })
     })
     io.emit("buttonCounts", counts)
   }
