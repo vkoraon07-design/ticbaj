@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 
 const io = new Server(httpServer, {
-  cors: { origin: "http://localhost:5173" },
+  cors: { origin: "https://ticbaj.web.app" }
 });
 
 const PORT = process.env.PORT || 3000;
@@ -23,6 +23,7 @@ io.on("connection", (socket) => {
     const BtnNum = data.BtnNum
     const Prize = data.Prize
     const uid = data.uid
+    const offlineFalse = data.offline
 
     if (!uid) return
 
@@ -98,14 +99,16 @@ io.on("connection", (socket) => {
         opponentName: player2.name,
         playingAs: 'O',
         BtnNum: BtnNum,
-        Prize: Prize
+        Prize: Prize,
+        offline: offlineFalse
       });
 
       player2.socket.emit("match-found", {
         opponentName: player1.name,
         playingAs: 'X',
         BtnNum: BtnNum,
-        Prize: Prize
+        Prize: Prize,
+        offline: offlineFalse
       })
 
 
