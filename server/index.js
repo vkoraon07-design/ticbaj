@@ -23,10 +23,8 @@ io.on("connection", (socket) => {
     const BtnNum = data.BtnNum
     const Prize = data.Prize
     const uid = data.uid
-    const offlineFalse = data.offline
-
-    if (!uid) return
-
+    const oppoOffline = data.offline
+    
     queue = queue.filter((p) => p.id !== socket.id && p.uid !== uid)
 
     if (queue.find((s) => s.id === socket.id)) return
@@ -40,13 +38,14 @@ io.on("connection", (socket) => {
       name: playerName,
       uid: uid,
       socket: socket,
-      BtnNum: BtnNum
+      BtnNum: BtnNum,
+      offline: oppoOffline
     })
 
     sendButtonCounts()
 
     const opponentIndex = queue.findIndex(
-      (p) => p.id !== socket.id && p.BtnNum === BtnNum
+      (p) => p.id !== socket.id && p.BtnNum === BtnNum && p.offline !== false
     )
 
     //if someone searching, opponent knows & send alert to all socket
@@ -99,16 +98,14 @@ io.on("connection", (socket) => {
         opponentName: player2.name,
         playingAs: 'O',
         BtnNum: BtnNum,
-        Prize: Prize,
-        offline: offlineFalse
+        Prize: Prize
       });
 
       player2.socket.emit("match-found", {
         opponentName: player1.name,
         playingAs: 'X',
         BtnNum: BtnNum,
-        Prize: Prize,
-        offline: offlineFalse
+        Prize: Prize
       })
 
 
