@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://ticbaj.web.app" },
+  cors: { origin: "http://localhost:5173" },
 
   // Detect dead/offline sockets faster
   pingInterval: 1000,
@@ -26,7 +26,6 @@ io.on("connection", (socket) => {
     const playerName = data.playerName
     const BtnNum = data.BtnNum
     const Prize = data.Prize
-    const Active = data.Active
     const uid = data.uid
 
     if (!uid) return
@@ -44,8 +43,7 @@ io.on("connection", (socket) => {
       name: playerName,
       uid: uid,
       socket: socket,
-      BtnNum: BtnNum,
-      Active: Active,
+      BtnNum: BtnNum
     })
 
     const opponentIndex = queue.findIndex(
@@ -54,15 +52,17 @@ io.on("connection", (socket) => {
 
     //if someone searching, opponent knows & send alert to all socket
     if (opponentIndex === -1) {
-      socket.broadcast.emit("btnIsActive", {
-        Active: Active
+      io.emit("btnIsActive", {
+        Active: "1P Waiting........",
+        BtnNum: BtnNum
+      })
+    } else {
+      io.emit("btnIsActive", {
+        Active: "",
+        BtnNum: BtnNum
       })
     }
-    if (opponentIndex === 1) {
-      socket.broadcast.emit("btnIsActive", {
-        Active: ""
-      })
-    }
+
 
 
     if (opponentIndex !== -1) {
