@@ -41,8 +41,7 @@ io.on("connection", (socket) => {
       name: playerName,
       uid: uid,
       socket: socket,
-      BtnNum: BtnNum,
-      offline: oppoOffline
+      BtnNum: BtnNum
     })
 
     sendButtonCounts()
