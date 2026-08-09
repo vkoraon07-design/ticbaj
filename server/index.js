@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://ticbaj.web.app" },
+  cors: { origin: "http://localhost:5173" },
 
   // Detect dead/offline sockets faster
   pingInterval: 1000,
@@ -56,6 +56,11 @@ io.on("connection", (socket) => {
     if (opponentIndex === -1) {
       socket.broadcast.emit("btnIsActive", {
         Active: Active
+      })
+    }
+    if (opponentIndex === 1) {
+      socket.broadcast.emit("btnIsActive", {
+        Active: ""
       })
     }
 
