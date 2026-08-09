@@ -5,10 +5,6 @@ const httpServer = createServer();
 
 const io = new Server(httpServer, {
   cors: { origin: "http://localhost:5173" },
-
-  // Detect dead/offline sockets faster
-  pingInterval: 1000,
-  pingTimeout: 1000
 });
 
 const PORT = process.env.PORT || 3000;
