@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer();
 
 const io = new Server(httpServer, {
-  cors: { origin: "https://ticbaj.web.app" },
+  cors: { origin: "http://localhost:5173" },
 
   // Detect dead/offline sockets faster
   pingInterval: 1000,
@@ -45,6 +45,8 @@ io.on("connection", (socket) => {
       socket: socket,
       BtnNum: BtnNum
     })
+
+    sendButtonCounts()
 
     const opponentIndex = queue.findIndex(
       (p) => p.id !== socket.id && p.BtnNum === BtnNum
@@ -93,6 +95,8 @@ io.on("connection", (socket) => {
         BtnNum: player1.BtnNum,
         Players: [player1.id, player2.id]
       }
+
+      sendButtonCounts()
 
       player1.socket.emit("match-found", {
         opponentName: player2.name,
@@ -192,9 +196,9 @@ io.on("connection", (socket) => {
     })
 
     Object.values(rooms).forEach((room) => {
-      room.Players.forEach((player) => {
-        counts[player.BtnNum] =
-          (counts[player.BtnNum] || 0) + 1;
+      room.Players.forEach(() => {
+        counts[room.BtnNum] =
+          (counts[room.BtnNum] || 0) + 1;
       })
     })
     io.emit("buttonCounts", counts)
